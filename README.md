@@ -88,6 +88,10 @@ Create a `.env.local` file in the root directory:
 # Gemini AI
 GEMINI_API_KEY=your_gemini_api_key_here
 
+# GitHub Token (Required for GitHub Explainer - Create at https://github.com/settings/tokens)
+# Select 'repo' scope when creating the token
+GITHUB_TOKEN=your_github_token_here
+
 # MongoDB (Atlas / Railway / local)
 MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/devpilot?retryWrites=true&w=majority
 
@@ -125,11 +129,40 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## 🚢 Deployment
 
+### Production Checklist
+
+Before deploying to production, ensure you have:
+
+- ✅ Removed all Next.js branding (completed)
+- ✅ Configured proper SEO metadata (completed)
+- ✅ Set up security headers in next.config.ts (completed)
+- ✅ Added environment variable validation (completed)
+- ✅ Created PWA manifest and icons (completed)
+- ✅ Configured robots.txt and sitemap.xml (completed)
+- ✅ Secured .env.local and added .env.example (completed)
+
+### Render (Recommended)
+
+1. Push your code to GitHub
+2. Create a new Web Service in Render
+3. Connect your GitHub repository
+4. Add the following environment variables in Render dashboard:
+   - `GEMINI_API_KEY` - Your Google Gemini API key
+   - `GITHUB_TOKEN` - Your GitHub personal access token (create at https://github.com/settings/tokens with 'repo' scope)
+   - `MONGODB_URI` - Your MongoDB connection string
+   - `REDIS_URL` - Your Redis connection URL
+   - `NEXTAUTH_SECRET` - A random 32+ character string (generate with: `openssl rand -base64 32`)
+   - `NEXTAUTH_URL` - Your Render app URL (e.g., https://your-app.onrender.com)
+   - `NODE_ENV` - Set to `production`
+5. Deploy
+
+**Important**: The GitHub Explainer feature requires a `GITHUB_TOKEN` environment variable to work properly. Without it, you'll get "Failed to fetch repository content" errors due to GitHub API rate limits.
+
 ### Vercel (Frontend)
 
 1. Push your code to GitHub
 2. Import project in Vercel
-3. Add environment variables in Vercel dashboard
+3. Add environment variables in Vercel dashboard (including GITHUB_TOKEN)
 4. Deploy
 
 ### MongoDB Atlas (Database)
@@ -137,12 +170,23 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 1. Create a free MongoDB Atlas account
 2. Create a cluster
 3. Get connection string and add to `MONGODB_URI`
+4. Configure IP whitelist (0.0.0.0/0 for cloud deployment)
 
 ### Upstash (Redis)
 
 1. Create a free Upstash account
 2. Create a Redis database
 3. Get connection URL and add to `REDIS_URL`
+
+### Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+**Security Note**: Never commit `.env.local` or any file containing real API keys. The `.gitignore` file is configured to prevent this.
 
 ## 🔑 Key Implementation Details
 
